@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'base/util/logger_utils.dart';
-import 'kp/bean/home_top_bean.dart';
-import 'kp/bean/order_detail_entity.dart';
-import 'kp/net/net_api.dart';
+import 'kp/model/counter_model.dart';
+import 'kp/viewModel/count_view_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,41 +36,45 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() async {
-    var response = await dio.get('order_detail_data.json');
-    OrderDetailEntity homeTopEntity = OrderDetailEntity.fromJson(response.data);
-    logger.d('测试数据——>$homeTopEntity');
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    CounterViewModel viewModel = CounterViewModel(CounterModel());
+    viewModel.init();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(AppLocalizations.of(context)!.title),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
+          child: ListenableBuilder(
+        listenable: viewModel,
+        builder: (context, child) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (viewModel.errorMessage != null)
+                Text(
+                  'Error: ${viewModel.errorMessage}',
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelSmall
+                      ?.apply(color: Colors.red),
+                ),
+              Text(
+                'Count: ${viewModel.count}',
+                style: Theme.of(context).textTheme.headlineMedium,
+              )
+            ],
+          );
+        },
+      )),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {
+          viewModel.increment();
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
