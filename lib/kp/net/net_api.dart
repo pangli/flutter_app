@@ -1,21 +1,45 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import '../../base/net/base_net.dart';
 import '../../base/util/platform_utils.dart';
 
-const isDebug = true;
-final KpHttp kpHttp = KpHttp();
+final Dio dio = DioSingleton.getInstance();
 
-class KpHttp extends BaseHttp {
-  @override
-  void init() {
-    options.baseUrl = 'https://server.khalaspay-ksa.com/';
-    interceptors
-      ..add(HeaderInterceptor())
-      ..add(ApiInterceptor())
-      ..add(PrettyDioLogger(
-          requestHeader: isDebug,
-          requestBody: isDebug,
-          responseHeader: isDebug));
+class DioSingleton {
+  static Dio? _instance;
+  static final Object _lock = Object();
+
+  static Dio getInstance() {
+    if (_instance == null) {
+      synchronized(_lock, () {
+        _instance ??= Dio();
+        // _instance?.transformer = DefaultTransformer()..jsonDecodeCallback = parseJson;
+        _instance?.options.baseUrl =
+            'https://raw.githubusercontent.com/pangli/NetworkJsonData/refs/heads/main/';
+        _instance?.interceptors
+          ?..add(ConfigInterceptor())
+          ..add(HeaderInterceptor())
+          ..add(ApiInterceptor())
+          ..add(PrettyDioLogger(
+              requestHeader: kDebugMode,
+              requestBody: kDebugMode,
+              responseHeader: kDebugMode));
+      });
+    }
+    return _instance!;
+  }
+
+  static void synchronized(Object lock, Function action) {
+    action();
+  }
+
+  void doSomething() {
+    if (kDebugMode) {
+      debugPrint("Factory-based DioSingleton");
+    }
   }
 }
 
@@ -35,7 +59,8 @@ class ApiInterceptor extends InterceptorsWrapper {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     ResponseData respData =
-        ResponseData.fromJson(response.headers, response.data);
+        ResponseData.fromJson(response.headers, jsonDecode(response.data));
+    // ResponseData.fromJson(response.headers, response.data);
     if (respData.success) {
       response.data = respData.data;
       return handler.next(response);
@@ -60,6 +85,6 @@ class ResponseData extends BaseResponseData {
     this.headers = headers;
     code = json['code'];
     message = json['message'];
-    data = json['result'];
+    data = json['data'];
   }
 }

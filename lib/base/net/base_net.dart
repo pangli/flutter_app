@@ -1,29 +1,14 @@
 import 'dart:convert';
-
-import 'package:dio/io.dart';
-import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
-
-export 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 /// 必须是顶层函数
-_parseAndDecode(String response) {
-  return jsonDecode(response);
+Map<String, dynamic> _parseAndDecode(String response) {
+  return jsonDecode(response) as Map<String, dynamic>;
 }
 
-parseJson(String text) {
+Future<Map<String, dynamic>> parseJson(String text) {
   return compute(_parseAndDecode, text);
-}
-
-abstract class BaseHttp extends DioForNative {
-  BaseHttp() {
-    /// 初始化 加入app通用处理
-    (transformer as BackgroundTransformer).jsonDecodeCallback = parseJson;
-    interceptors.add(ConfigInterceptor());
-    init();
-  }
-
-  void init();
 }
 
 /// 添加常用Config
@@ -31,9 +16,9 @@ class ConfigInterceptor extends InterceptorsWrapper {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     options
-      ..connectTimeout = const Duration(seconds: 10)
-      ..sendTimeout = const Duration(seconds: 10)
-      ..receiveTimeout = const Duration(seconds: 10);
+      ..connectTimeout = const Duration(seconds: 60)
+      ..sendTimeout = const Duration(seconds: 60)
+      ..receiveTimeout = const Duration(seconds: 60);
     super.onRequest(options, handler);
   }
 }
