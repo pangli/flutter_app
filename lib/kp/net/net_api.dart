@@ -22,7 +22,7 @@ class DioSingleton {
         _instance?.interceptors
           ?..add(ConfigInterceptor())
           ..add(HeaderInterceptor())
-          ..add(ApiInterceptor())
+          ..add(ResponseInterceptor())
           ..add(PrettyDioLogger(
               requestHeader: kDebugMode,
               requestBody: kDebugMode,
@@ -55,7 +55,7 @@ class HeaderInterceptor extends InterceptorsWrapper {
   }
 }
 
-class ApiInterceptor extends InterceptorsWrapper {
+class ResponseInterceptor extends InterceptorsWrapper {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     ResponseData respData =
