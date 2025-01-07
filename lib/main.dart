@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'base/util/logger_utils.dart';
+import 'kp/bean/home_top_bean.dart';
+import 'kp/bean/order_detail_entity.dart';
+import 'kp/net/net_api.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -36,7 +41,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() {
+  void _incrementCounter() async {
+    var response = await dio.get('order_detail_data.json');
+    OrderDetailEntity homeTopEntity = OrderDetailEntity.fromJson(response.data);
+    logger.d('测试数据——>$homeTopEntity');
     setState(() {
       _counter++;
     });
