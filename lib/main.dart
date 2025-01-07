@@ -36,10 +36,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late CounterViewModel viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel = CounterViewModel(CounterModel());
+    viewModel.init();
+  }
+
   @override
   Widget build(BuildContext context) {
-    CounterViewModel viewModel = CounterViewModel(CounterModel());
-    viewModel.init();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
