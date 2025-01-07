@@ -52,6 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Text(AppLocalizations.of(context)!.title),
               if (viewModel.errorMessage != null)
                 Text(
                   'Error: ${viewModel.errorMessage}',
