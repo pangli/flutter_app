@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'kp/model/counter_model.dart';
-import 'kp/viewModel/count_view_model.dart';
+import '../model/counter_model.dart';
+import '../viewModel/count_view_model.dart';
 
 void main() {
   runApp(const MyApp());
