@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app/kp/page/welcome.dart';
 import 'package:flutter_app/kp/widget/animated_progress_indicator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -16,7 +17,7 @@ class LoginApp extends StatelessWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
@@ -34,19 +35,26 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red[400],
-      body: const Center(
-        child: SizedBox(
-          width: 320,
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(16)),
-            ),
-            child: LoginForm(),
-          ),
+        body: Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          // 起始颜色
+          begin: Alignment.topCenter,
+          // 结束颜色
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xffFDEAE9),
+            Colors.white,
+          ],
         ),
       ),
-    );
+      child: const Center(
+        child: SizedBox(
+          width: 320,
+          child: LoginForm(),
+        ),
+      ),
+    ));
   }
 }
 
@@ -60,10 +68,10 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  final _firstNameTextController = TextEditingController();
-  final _lastNameTextController = TextEditingController();
-  final _usernameTextController = TextEditingController();
+  final _phoneTextController = TextEditingController();
+  final _passwordTextController = TextEditingController();
   double _formProgress = 0;
+  bool showProgress = true;
 
   @override
   Widget build(BuildContext context) {
@@ -72,46 +80,72 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          AnimatedProgressIndicator(value: _formProgress),
-          Text('Sign up', style: Theme.of(context).textTheme.headlineMedium),
           Padding(
             padding: const EdgeInsets.all(8),
             child: TextFormField(
-              controller: _firstNameTextController,
+              keyboardType: TextInputType.phone,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              maxLength: 11,
+              controller: _phoneTextController,
               decoration: const InputDecoration(
-                  filled: true, labelText: 'ddd', hintText: 'First name'),
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  labelText: 'Phone Number',
+                  suffixIcon: Icon(Icons.clear),
+                  hintText: 'Input 11-digit phone number'),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8),
             child: TextFormField(
-              controller: _lastNameTextController,
-              decoration: const InputDecoration(hintText: 'Last name'),
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              maxLength: 6,
+              obscureText: true,
+              controller: _passwordTextController,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  labelText: 'Password',
+                  suffixIcon: Icon(Icons.clear),
+                  hintText: 'Input 6-digit password'),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: TextFormField(
-              controller: _usernameTextController,
-              decoration: const InputDecoration(hintText: 'Username'),
-            ),
-          ),
-          TextButton(
-            style: ButtonStyle(
-              foregroundColor: WidgetStateProperty.resolveWith((states) {
-                return states.contains(WidgetState.disabled)
-                    ? null
-                    : Colors.white;
-              }),
-              backgroundColor: WidgetStateProperty.resolveWith((states) {
-                return states.contains(WidgetState.disabled)
-                    ? null
-                    : Colors.blue;
-              }),
-            ),
-            onPressed: _formProgress == 1 ? _showWelcomeScreen : null,
-            child: const Text('Sign up'),
-          ),
+          Stack(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      style: ButtonStyle(
+                        foregroundColor:
+                            WidgetStateProperty.resolveWith((states) {
+                          return states.contains(WidgetState.disabled)
+                              ? Colors.grey[400]
+                              : Colors.white;
+                        }),
+                        backgroundColor:
+                            WidgetStateProperty.resolveWith((states) {
+                          return states.contains(WidgetState.disabled)
+                              ? Colors.grey[350]
+                              : Colors.blue;
+                        }),
+                      ),
+                      onPressed: _formProgress == 1 ? _showWelcomeScreen : null,
+                      child: const Text('Sign up'),
+                    ),
+                  )
+                ],
+              ),
+              if (_formProgress != 1 && showProgress)
+                AnimatedProgressIndicator(
+                  value: _formProgress,
+                  animationCompleted: () {
+                    showProgress = false;
+                  },
+                ),
+            ],
+          )
         ],
       ),
     );
@@ -119,11 +153,7 @@ class _LoginFormState extends State<LoginForm> {
 
   void _updateFormProgress() {
     var progress = 0.0;
-    final controllers = [
-      _firstNameTextController,
-      _lastNameTextController,
-      _usernameTextController
-    ];
+    final controllers = [_phoneTextController, _passwordTextController];
 
     for (final controller in controllers) {
       if (controller.value.text.isNotEmpty) {
@@ -132,6 +162,8 @@ class _LoginFormState extends State<LoginForm> {
     }
 
     setState(() {
+      showProgress = _phoneTextController.value.text.isEmpty |
+          _passwordTextController.value.text.isEmpty;
       _formProgress = progress;
     });
   }
