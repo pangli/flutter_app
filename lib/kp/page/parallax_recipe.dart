@@ -13,14 +13,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: darkBlue),
-      debugShowCheckedModeBanner: false,
-      home: const Scaffold(
-        body: Center(
-          child: ExampleParallax(),
-        ),
-      ),
-    );
+        theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: darkBlue),
+        debugShowCheckedModeBanner: false,
+        home: const Scaffold(
+          body: SafeArea(
+            child: Center(
+              child: ExampleParallax(),
+            ),
+          ),
+        ));
   }
 }
 
@@ -326,8 +327,7 @@ class Location {
   final String imageUrl;
 }
 
-const urlPrefix =
-    'https://docs.flutter.cn/cookbook/img-files/effects/parallax';
+const urlPrefix = 'https://docs.flutter.cn/cookbook/img-files/effects/parallax';
 const locations = [
   Location(
     name: 'Mount Rushmore',
