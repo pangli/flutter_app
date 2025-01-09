@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class AnimatedProgressIndicator extends StatefulWidget {
   final double value;
-  final Function animationCompleted;
+  final Function? animationCompleted;
 
   const AnimatedProgressIndicator(
-      {super.key, required this.value, required this.animationCompleted});
+      {super.key, required this.value, this.animationCompleted});
 
   @override
   State<StatefulWidget> createState() {

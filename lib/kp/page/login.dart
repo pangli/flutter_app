@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   runApp(const LoginApp());
+  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 }
 
 class LoginApp extends StatelessWidget {
@@ -35,6 +36,10 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        // appBar: AppBar(
+        //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        //   title: Text("Login"),
+        // ),
         body: Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -111,41 +116,58 @@ class _LoginFormState extends State<LoginForm> {
                   hintText: 'Input 6-digit password'),
             ),
           ),
-          Stack(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      style: ButtonStyle(
-                        foregroundColor:
-                            WidgetStateProperty.resolveWith((states) {
-                          return states.contains(WidgetState.disabled)
-                              ? Colors.grey[400]
-                              : Colors.white;
-                        }),
-                        backgroundColor:
-                            WidgetStateProperty.resolveWith((states) {
-                          return states.contains(WidgetState.disabled)
-                              ? Colors.grey[350]
-                              : Colors.blue;
-                        }),
-                      ),
-                      onPressed: _formProgress == 1 ? _showWelcomeScreen : null,
-                      child: const Text('Sign up'),
-                    ),
-                  )
-                ],
-              ),
-              if (_formProgress != 1 && showProgress)
+          GestureDetector(
+            onTap:  _formProgress == 1 ? _showWelcomeScreen : null,
+            child: Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
                 AnimatedProgressIndicator(
                   value: _formProgress,
-                  animationCompleted: () {
-                    showProgress = false;
-                  },
+                  // animationCompleted: () {
+                  //   showProgress = false;
+                  // },
                 ),
-            ],
-          )
+                Text(
+                  'Login',
+                  style: TextStyle(
+                      color:
+                          _formProgress == 1 ? Colors.white : Colors.grey[400],
+                      fontWeight: FontWeight.w800),
+                ),
+                // Row(
+                //   children: [
+                //     Expanded(
+                //       child: TextButton(
+                //         style: ButtonStyle(
+                //           foregroundColor:
+                //               WidgetStateProperty.resolveWith((states) {
+                //             return states.contains(WidgetState.disabled)
+                //                 ? Colors.grey[400]
+                //                 : Colors.white;
+                //           }),
+                //           backgroundColor:
+                //               WidgetStateProperty.resolveWith((states) {
+                //             return states.contains(WidgetState.disabled)
+                //                 ? Colors.grey[350]
+                //                 : Colors.blue;
+                //           }),
+                //         ),
+                //         onPressed: _formProgress == 1 ? _showWelcomeScreen : null,
+                //         child: const Text('Sign up'),
+                //       ),
+                //     )
+                //   ],
+                // ),
+                // if (_formProgress != 1 && showProgress)
+                //   AnimatedProgressIndicator(
+                //     value: _formProgress,
+                //     animationCompleted: () {
+                //       showProgress = false;
+                //     },
+                //   ),
+              ],
+            ),
+          ),
         ],
       ),
     );
