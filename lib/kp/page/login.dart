@@ -117,7 +117,7 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ),
           GestureDetector(
-            onTap:  _formProgress == 1 ? _showWelcomeScreen : null,
+            onTap: _formProgress == 1 ? _showWelcomeScreen : null,
             child: Stack(
               alignment: AlignmentDirectional.center,
               children: [
