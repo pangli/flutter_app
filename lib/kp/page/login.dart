@@ -173,6 +173,13 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
+  @override
+  void dispose() {
+    _phoneTextController.dispose();
+    _passwordTextController.dispose();
+    super.dispose();
+  }
+
   void _updateFormProgress() {
     var progress = 0.0;
     final controllers = [_phoneTextController, _passwordTextController];
